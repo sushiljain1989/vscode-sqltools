@@ -456,6 +456,22 @@
                                 "required": false,
                                 "default": false
                             },
+                            "databaseFilter": {
+                                "type": [
+                                    "array",
+                                    "string"
+                                ],
+                                "enum": [
+                                    "all",
+                                    "connected"
+                                ],
+                                "items": {
+                                    "type": "string",
+                                    "decriptions": "Database names"
+                                },
+                                "description": "Allow user to filter databases for explorer",
+                                "default": "connected"
+                            },
                             "dialect": {
                                 "type": "string",
                                 "enum": [

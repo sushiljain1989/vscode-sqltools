@@ -1,11 +1,25 @@
 import Connection from '@sqltools/core/connection';
 import ConfigManager from '@sqltools/core/config-manager';
-import { ConnectionInterface,} from '@sqltools/core/interface';
+import { ConnectionInterface, DatabaseDialect,} from '@sqltools/core/interface';
 import SQLTools, { RequestHandler, DatabaseInterface } from '@sqltools/core/plugin-api';
 import { getConnectionId } from '@sqltools/core/utils';
 import csvStringify from 'csv-stringify/lib/sync';
 import fs from 'fs';
-import { ConnectionDataUpdatedRequest, ConnectRequest, DisconnectRequest, GetConnectionDataRequest, GetConnectionPasswordRequest, GetConnectionsRequest, RefreshAllRequest, RunCommandRequest, SaveResultsRequest, ProgressNotificationStart, ProgressNotificationComplete, TestConnectionRequest } from './contracts';
+import {
+  ConnectionDataUpdatedRequest,
+  ConnectRequest,
+  DisconnectRequest,
+  GetConnectionDataRequest, 
+  GetConnectionPasswordRequest,
+  GetConnectionsRequest,
+  RefreshAllRequest,
+  RunCommandRequest,
+  SaveResultsRequest,
+  ProgressNotificationStart,
+  ProgressNotificationComplete,
+  TestConnectionRequest,
+  GetChildrenForTreeItemRequest,
+} from './contracts';
 import actions from './store/actions';
 import DependencyManager from '../dependency-manager/language-server';
 import { DependeciesAreBeingInstalledNotification } from '../dependency-manager/contracts';
@@ -157,6 +171,20 @@ export default class ConnectionManagerPlugin implements SQLTools.LanguageServerP
     }
   };
 
+  private GetChildrenForTreeItemHandler: RequestHandler<typeof GetChildrenForTreeItemRequest> = async (req) => {
+    if (!req || !req.conn) {
+      return [];
+    }
+    let c = this.getConnectionInstance(req.conn);
+    if (!c) return [];
+    switch (req.contextValue) {
+      case 'connection':
+      case 'connectedConnection':
+        return c.getDatabases();
+    }
+    return [];
+  };
+
   private testConnectionHandler: RequestHandler<typeof TestConnectionRequest> = async (req: {
     conn: ConnectionInterface;
     password?: string;
@@ -216,6 +244,7 @@ export default class ConnectionManagerPlugin implements SQLTools.LanguageServerP
     this.server.onRequest(GetConnectionPasswordRequest, this.GetConnectionPasswordRequestHandler);
     this.server.onRequest(ConnectRequest, this.openConnectionHandler);
     this.server.onRequest(TestConnectionRequest, this.testConnectionHandler);
+    this.server.onRequest(GetChildrenForTreeItemRequest, this.GetChildrenForTreeItemHandler);
     this.server.onRequest(GetConnectionsRequest, this.clientRequestConnectionHandler);
     this.server.addOnDidChangeConfigurationHooks(this._autoConnectIfActive);
   }

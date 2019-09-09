@@ -158,6 +158,14 @@ export interface ConnectionInterface {
     connected?: string;
     disconnected?: string;
   };
+
+  /**
+   * Allow user to filter databases for explorer
+   *
+   * @type {'connected' | 'all' | string[]}
+   * @memberof ConnectionInterface
+   */
+  databaseFilter?: 'connected' | 'all' | string[];
 }
 
 export interface ConnectionDialect {
@@ -165,6 +173,7 @@ export interface ConnectionDialect {
   credentials: ConnectionInterface;
   open(): Promise<any>;
   close(): Promise<any>;
+  getDatabases?(): Promise<DatabaseInterface.TreeItemRaw[]>;
   getTables(): Promise<DatabaseInterface.Table[]>;
   getColumns(): Promise<DatabaseInterface.TableColumn[]>;
   getFunctions(): Promise<DatabaseInterface.Function[]>;

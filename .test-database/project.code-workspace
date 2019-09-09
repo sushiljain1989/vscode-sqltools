@@ -60,6 +60,7 @@
         "askForPassword": false,
         "password": "root",
         "connectionTimeout": 15,
+        "databaseFilter": "all",
         "icons": {
           "active": "https://cdn.iconscout.com/icon/free/png-256/postgresql-10-1175121.png"
         }

@@ -4,7 +4,8 @@ export interface DialectQueries {
   fetchColumns: string;
   fetchRecords: string;
   fetchFunctions?: string;
-  [id: string]: string;
+  fetchDatabases?: (filter: 'all' | 'connected' | string[]) => string;
+  [id: string]: string | Function;
 }
 
 export enum DatabaseDialect {

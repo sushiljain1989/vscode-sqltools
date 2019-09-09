@@ -20,7 +20,7 @@ function insertTextHandler(node: { value: string, snippet?: SnippetString } | st
   if (typeof node === 'string' || node instanceof SnippetString) {
     return insertText(node);
   }
-  return insertText(node.snippet || node.value);
+  return insertText(node.snippet || node.value); //@TODO replace to use only snippet
 }
 
 function generateInsertQueryHandler(item: { columns: DatabaseInterface.TableColumn[], name?: string }) {

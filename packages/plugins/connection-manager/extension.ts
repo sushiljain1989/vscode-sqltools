@@ -10,7 +10,7 @@ import { SidebarConnection, SidebarTableOrView, ConnectionExplorer } from '@sqlt
 import ResultsWebviewManager from '@sqltools/plugins/connection-manager/screens/results';
 import SettingsWebview from '@sqltools/plugins/connection-manager/screens/settings';
 import { commands, QuickPickItem, ExtensionContext, StatusBarAlignment, StatusBarItem, window, workspace, ConfigurationTarget, Uri, TextEditor, TextDocument, ProgressLocation, Progress } from 'vscode';
-import { ConnectionDataUpdatedRequest, ConnectRequest, DisconnectRequest, GetConnectionDataRequest, GetConnectionPasswordRequest, GetConnectionsRequest, RefreshAllRequest, RunCommandRequest, ProgressNotificationStart, ProgressNotificationComplete, ProgressNotificationStartParams, ProgressNotificationCompleteParams, TestConnectionRequest } from './contracts';
+import { ConnectionDataUpdatedRequest, ConnectRequest, DisconnectRequest, GetConnectionDataRequest, GetConnectionPasswordRequest, GetConnectionsRequest, RefreshAllRequest, RunCommandRequest, ProgressNotificationStart, ProgressNotificationComplete, ProgressNotificationStartParams, ProgressNotificationCompleteParams, TestConnectionRequest, GetChildrenForTreeItemRequest } from './contracts';
 import path from 'path';
 import CodeLensPlugin from '../codelens/extension';
 import { getHome } from '@sqltools/core/utils';
@@ -43,6 +43,13 @@ export default class ConnectionManagerPlugin implements SQLTools.ExtensionPlugin
     return this.client.sendRequest(
       TestConnectionRequest,
       { conn: c, password },
+    );
+  }
+
+  private ext_getChildrenForTreeItem = async ({ conn, contextValue }) => {
+    return this.client.sendRequest(
+      GetChildrenForTreeItemRequest,
+      { conn, contextValue },
     );
   }
 
@@ -598,6 +605,7 @@ export default class ConnectionManagerPlugin implements SQLTools.ExtensionPlugin
       .registerCommand(`focusOnExplorer`, this.ext_focusOnExplorer)
       .registerCommand(`attachFileToConnection`, this.ext_attachFileToConnection)
       .registerCommand(`testConnection`, this.ext_testConnection)
+      .registerCommand(`getChildrenForTreeItem`, this.ext_getChildrenForTreeItem)
       .registerCommand(`detachConnectionFromFile`, this.ext_detachConnectionFromFile);
 
     // hooks

@@ -94,4 +94,57 @@ WHERE
   n.nspname not in ('pg_catalog', 'information_schema')
 ORDER BY name
 ;`,
+  fetchDatabases: (filter = 'connected') => {
+    if (typeof filter === 'string') {
+      return `
+        SELECT db.oid AS "internalId", db.datname AS name, db.*
+        FROM pg_catalog.pg_database db
+        ${
+          filter === 'connected'
+          ? 'WHERE datname = CURRENT_DATABASE()'
+          : `WHERE datallowconn AND NOT datistemplate ORDER BY db.datname`
+        }
+      `;
+    }
+    return `
+        SELECT db.oid AS "internalId", db.datname AS name, db.*
+        FROM pg_catalog.pg_database db
+        WHERE datname IN ('${filter.join(`', '`)}')
+        ORDER BY db.datname
+      `
+  },
+  fetchKeywords: `
+SELECT
+  string_agg(word, ',')
+FROM
+  pg_catalog.pg_get_keywords()
+  `,
+  fetchSchemas: `
+SELECT
+  n.oid as "internalId",
+  n.nspname as "name",
+  n.*
+FROM
+  pg_catalog.pg_namespace n
+ORDER BY
+  nspname
+  `,
+  fetchTablesAndViews: (internalId: number) => `
+SELECT
+  c.oid as "internalId",
+  c.relname as "name",
+  c.relkind as "kind",
+  c.*,
+  d.description,
+  pg_catalog.pg_get_expr(c.relpartbound, c.oid) as partition_expr,
+  pg_catalog.pg_get_partkeydef(c.oid) as partition_key
+FROM
+  pg_catalog.pg_class c
+  LEFT OUTER JOIN pg_catalog.pg_description d ON d.objoid = c.oid
+  AND d.objsubid = 0
+  AND d.classoid = 'pg_class' :: regclass
+WHERE
+  c.relnamespace = ${internalId}
+  AND c.relkind not in ('i', 'c');
+  `
 } as DialectQueries;

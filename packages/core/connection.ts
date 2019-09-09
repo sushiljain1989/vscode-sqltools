@@ -55,6 +55,10 @@ export default class Connection {
     return this.conn.open().catch(this.decorateException);
   }
 
+  public getDatabases() {
+    return this.conn.getDatabases().catch(this.decorateException);
+  }
+
   public getTables(cached: boolean = false): Promise<DatabaseInterface.Table[]> {
     if (cached && this.tables.length > 0) {
       return Promise.resolve(this.tables);

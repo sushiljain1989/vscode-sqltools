@@ -35,6 +35,22 @@ export const TestConnectionRequest = new RequestType<
   Error,
   void
 >('connection/TestConnectionRequest');
+
+// @TODO
+enum ContextValue {
+  'CONNECTION' = 'connection',
+  'CONNECTED_CONNECTION' = 'connectedConnection',
+  'CONNECTION.TABLEORVIEW' = 'connection.tableOrView',
+  'CONNECTION.COLUMN' = 'connection.column',
+  'CONNECTION.FUNCTION' = 'connection.function',
+  'CONNECTION.RESOURCE_GROUP' = 'connection.resource_group',
+}
+export const GetChildrenForTreeItemRequest = new RequestType<
+  { conn: ConnectionInterface, contextValue: ContextValue },
+  DatabaseInterface.TreeItemRaw[],
+  Error,
+  void
+>('connection/GetChildrenForTreeItemRequest');
 export const DisconnectRequest = new RequestType<
   { conn: ConnectionInterface },
   void,
