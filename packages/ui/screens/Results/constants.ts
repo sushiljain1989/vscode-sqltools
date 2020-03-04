@@ -20,6 +20,7 @@ export enum MenuActions {
   SaveCSVOption = 'Save Results As Csv',
   SaveJSONOption = 'Save Results As Json',
   OpenEditorWithValueOption = 'Open Editor With {contextAction}',
+  ShowOnMap = 'Show Location on Map',
   OpenEditorWithRowOption = 'Open Editor With Row',
   Divider = 'sep',
 }
